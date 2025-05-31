@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,16 +18,19 @@
       justify-content: start;
       height: 100vh;
     }
+
     h1 {
       color: #00ffcc;
       margin-bottom: 10px;
     }
+
     button {
       margin: 5px;
       padding: 10px;
       font-size: 1em;
       cursor: pointer;
     }
+
     #log {
       margin-top: 20px;
       max-height: 40vh;
@@ -142,30 +146,35 @@
     }
 
     function testJSInjection() {
-      if (!targetUrl) { log("No target URL set."); return; }
+      if (!targetUrl) {
+        log("No target URL set.");
+        return;
+      }
       const script = document.createElement("script");
-      script.src = targetUrl + "/?test=<script>alert('XSS')</script>";
+      const payload = encodeURIComponent("alert('XSS')");
+      script.src = targetUrl + "/?test=" + payload;
       document.body.appendChild(script);
       log("Injected script src: " + script.src);
     }
 
-    function runAllTests() {
-      sendPostMessage();
-      attemptCORSFetch();
-      attemptCookieAccess();
-      testWindowTop();
-      testWindowOpener();
-      attemptCookieWrite();
-      testServiceWorker();
-      testXHRRequest();
-      testLocalStorage();
-      testSessionStorage();
-      testReferrer();
-      testFormSubmission();
-      testJSInjection();
-    }
+  function runAllTests() {
+  sendPostMessage();
+  attemptCORSFetch();
+  attemptCookieAccess();
+  testWindowTop();
+  testWindowOpener();
+  attemptCookieWrite();
+  testServiceWorker();
+  testXHRRequest();
+  testLocalStorage();
+  testSessionStorage();
+  testReferrer();
+  testFormSubmission();
+  testJSInjection();
+  }
   </script>
 </head>
+
 <body>
   <h1>Web App Security Testbed</h1>
   <button onclick="sendPostMessage()">Send postMessage</button>
@@ -184,4 +193,5 @@
   <button onclick="runAllTests()">Run All Tests</button>
   <div id="log">Logs:<br></div>
 </body>
+
 </html>
