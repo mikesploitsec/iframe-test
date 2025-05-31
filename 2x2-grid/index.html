@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iframe Security Testing Rig</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="scripts.js"></script>
+</head>
+<body>
+  <h1>Iframe Security Testing Rig</h1>
+  <div id="target-url-input">
+    <label for="target">Enter the URL of the target site for testing:</label>
+    <input type="text" id="target" placeholder="https://example.com" />
+    <button onclick="loadTarget()">Load Target</button>
+  </div>
+<div class="grid" style="display: none;">
+  <iframe id="targetFrame" src="" title="Target Web App"></iframe>
+  <iframe src="https://mikesploitsec.github.io/iframe-attack-site/" title="Malicious Attacker Site"></iframe>
+  <iframe src="https://example.com" title="Example Site"></iframe>
+  <iframe src="https://httpbin.org" title="Reference Site"></iframe>
+</div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Malicious Attacker Site</title>
+  <style>
+    body {
+      background-color: #0a0a0a;
+      color: #f8f8f8;
+      font-family: monospace;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    h1 {
+      color: red;
+      margin-bottom: 20px;
+    }
+    button {
+      margin: 5px;
+      padding: 10px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+  </style>
+  <script>
+    function sendPostMessage() {
+      try {
+        parent.postMessage('💀 Malicious postMessage test from attacker site 💀', '*');
+        console.log('postMessage sent to parent');
+      } catch (err) {
+        console.error('postMessage error:', err);
+      }
+    }
+
+    function attemptFetch() {
+      fetch('https://app.zofiq.ai/api/test')
+        .then(response => response.text())
+        .then(data => console.log('Fetch response:', data))
+        .catch(err => console.error('Fetch error:', err));
+    }
+
+    function attemptCookieAccess() {
+      try {
+        console.log('Document cookies:', document.cookie);
+      } catch (err) {
+        console.error('Cookie access error:', err);
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>🚩 Malicious Attacker Site</h1>
+  <button onclick="sendPostMessage()">Send postMessage</button>
+  <button onclick="attemptFetch()">Attempt CORS Fetch</button>
+  <button onclick="attemptCookieAccess()">Attempt Cookie Access</button>
+</body>
+</html>
