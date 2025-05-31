@@ -9,7 +9,7 @@ function loadTarget() {
   document.getElementById('target-url-input').style.display = 'none';
 
   // Broadcast the target URL to all iframes (testbed)
-for (let i = 0; i < window.frames.length; i++) {
-  window.frames[i].postMessage({ type: 'setTarget', url: url }, '*');
-}
+  for (let i = 0; i < window.frames.length; i++) {
+    window.frames[i].postMessage({ type: 'setTarget', url: url }, '*');
+  }
 }
