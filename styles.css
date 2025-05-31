@@ -1,8 +1,5 @@
-html, body {
+body {
   margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
   font-family: monospace;
   background-color: #121212;
   color: #f8f8f8;
@@ -28,15 +25,11 @@ h1 {
   font-size: 1em;
 }
 
-.grid {
+.layout {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  height: calc(100vh - 60px);
+  height: calc(100vh - 80px);
   width: 100vw;
-  gap: 5px;
-  padding: 5px;
-  box-sizing: border-box;
 }
 
 iframe {

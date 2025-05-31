@@ -5,6 +5,11 @@ function loadTarget() {
     return;
   }
   document.getElementById('targetFrame').src = url;
-  document.querySelector('.grid').style.display = 'grid';
+  document.querySelector('.layout').style.display = 'grid';
   document.getElementById('target-url-input').style.display = 'none';
+
+  // Broadcast the target URL to all iframes (testbed)
+  window.frames.forEach(frame => {
+    frame.postMessage({ type: 'setTarget', url: url }, '*');
+  });
 }

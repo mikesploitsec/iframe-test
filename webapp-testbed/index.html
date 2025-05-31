@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web App Security Testbed</title>
+  <style>
+    body {
+      background-color: #0a0a0a;
+      color: #f8f8f8;
+      font-family: monospace;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: start;
+      height: 100vh;
+    }
+
+    h1 {
+      color: #00ffcc;
+      margin-bottom: 10px;
+    }
+
+    button {
+      margin: 5px;
+      padding: 10px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    #log {
+      margin-top: 20px;
+      max-height: 40vh;
+      overflow-y: auto;
+      background: #222;
+      color: #0f0;
+      padding: 10px;
+      border-radius: 5px;
+      width: 80%;
+    }
+  </style>
+  <script>
+    let targetUrl = "";
+
+    window.addEventListener("message", (event) => {
+      if (event.data.type === "setTarget") {
+        targetUrl = event.data.url;
+        log(`Target URL set to: ${targetUrl}`);
+      }
+    });
+
+    function log(msg) {
+      const logDiv = document.getElementById("log");
+      logDiv.innerHTML += msg + "<br>";
+    }
+
+    function sendPostMessage() {
+      parent.postMessage('Test message from Security Testbed', '*');
+      log('Sent postMessage to parent');
+    }
+
+    function attemptCORSFetch() {
+      if (!targetUrl) { log("No target URL set."); return; }
+      fetch(targetUrl + '/api/test')
+        .then(response => response.text())
+        .then(data => log('CORS Fetch Success: ' + data))
+        .catch(err => log('CORS Fetch Error: ' + err));
+    }
+
+    function attemptCookieAccess() {
+      try { log('Document cookies: ' + document.cookie); }
+      catch (err) { log('Cookie access error: ' + err); }
+    }
+
+    function testWindowTop() {
+      try { log('window.top.location: ' + window.top.location.href); }
+      catch (err) { log('window.top access error: ' + err); }
+    }
+
+    function testWindowOpener() {
+      try { log(window.opener ? 'window.opener is accessible' : 'window.opener is null'); }
+      catch (err) { log('window.opener access error: ' + err); }
+    }
+
+    function attemptCookieWrite() {
+      try { document.cookie = "testcookie=1; SameSite=None; Secure"; log('Cookie write attempt made.'); }
+      catch (err) { log('Cookie write error: ' + err); }
+    }
+
+    function testServiceWorker() {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => log('Service Worker registered.'))
+          .catch(err => log('Service Worker registration failed: ' + err));
+      } else {
+        log('Service Worker API not supported.');
+      }
+    }
+
+    function testXHRRequest() {
+      if (!targetUrl) { log("No target URL set."); return; }
+      const xhr = new XMLHttpRequest();
+      xhr.open("GET", targetUrl + "/api/test", true);
+      xhr.onload = () => log("XHR response: " + xhr.status + " " + xhr.responseText);
+      xhr.onerror = () => log("XHR error occurred.");
+      xhr.send();
+    }
+
+    function testLocalStorage() {
+      try {
+        localStorage.setItem("testKey", "testValue");
+        log("localStorage test: " + localStorage.getItem("testKey"));
+      } catch (err) {
+        log("localStorage access error: " + err);
+      }
+    }
+
+    function testSessionStorage() {
+      try {
+        sessionStorage.setItem("testKey", "testValue");
+        log("sessionStorage test: " + sessionStorage.getItem("testKey"));
+      } catch (err) {
+        log("sessionStorage access error: " + err);
+      }
+    }
+
+    function testReferrer() {
+      log("document.referrer: " + document.referrer);
+    }
+
+    function testFormSubmission() {
+      if (!targetUrl) { log("No target URL set."); return; }
+      const form = document.createElement("form");
+      form.action = targetUrl + "/test-form";
+      form.method = "POST";
+      const input = document.createElement("input");
+      input.name = "testField";
+      input.value = "testValue";
+      form.appendChild(input);
+      document.body.appendChild(form);
+      form.submit();
+      log("Form submitted to: " + form.action);
+    }
+
+    function testJSInjection() {
+      if (!targetUrl) {
+        log("No target URL set.");
+        return;
+      }
+      const script = document.createElement("script");
+      const payload = encodeURIComponent("<img src=x onerror=alert('XSS')>");
+      script.src = targetUrl + "/?test=" + payload;
+      document.body.appendChild(script);
+      log("Injected script src: " + script.src);
+    }
+
+    function runAllTests() {
+      sendPostMessage();
+      attemptCORSFetch();
+      attemptCookieAccess();
+      testWindowTop();
+      testWindowOpener();
+      attemptCookieWrite();
+      testServiceWorker();
+      testXHRRequest();
+      testLocalStorage();
+      testSessionStorage();
+      testReferrer();
+      testFormSubmission();
+      testJSInjection();
+    }
+  </script>
+</head>
+
+<body>
+  <h1>Web App Security Testbed</h1>
+  <button onclick="sendPostMessage()">Send postMessage</button>
+  <button onclick="attemptCORSFetch()">Attempt CORS Fetch</button>
+  <button onclick="attemptCookieAccess()">Attempt Cookie Access</button>
+  <button onclick="testWindowTop()">Test window.top</button>
+  <button onclick="testWindowOpener()">Test window.opener</button>
+  <button onclick="attemptCookieWrite()">Attempt Cookie Write</button>
+  <button onclick="testServiceWorker()">Test Service Worker</button>
+  <button onclick="testXHRRequest()">Test XHR Request</button>
+  <button onclick="testLocalStorage()">Test localStorage Access</button>
+  <button onclick="testSessionStorage()">Test sessionStorage Access</button>
+  <button onclick="testReferrer()">Test Referrer Policy</button>
+  <button onclick="testFormSubmission()">Test Form Submission</button>
+  <button onclick="testJSInjection()">Test JS Injection via URL</button>
+  <button onclick="runAllTests()">Run All Tests</button>
+  <div id="log">Logs:<br></div>
+</body>
+
+</html>
