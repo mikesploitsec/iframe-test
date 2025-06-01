@@ -37,7 +37,11 @@
         for (let path of commonApiEndpoints) {
             const url = targetOrigin + path;
             try {
-                const res = await fetch(url, { method: 'GET', mode: 'cors' });
+                const res = await fetch(url, {
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: { 'User-Agent': 'Mikesploit-Security-Test/1.0 (ethical recon; contact: mikesploit@proton.me)' }
+                });
                 const status = res.status;
                 const statusText = res.statusText;
                 log(`🟡 Probed ${url} - Status: ${status} ${statusText}`);
@@ -59,6 +63,8 @@
             } catch (e) {
                 log(`❌ Probe error for ${url}: ${e}`);
             }
+            // Delay between probes
+            await new Promise(r => setTimeout(r, 250));
         }
         if (!apiBase) log("❌ No API base found; tests will proceed without dynamic endpoint.");
     }
